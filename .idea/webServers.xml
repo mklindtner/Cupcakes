@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="9fd72109-b41f-4b38-a227-9b762d5622b0" name="DigitalOcean" url="http://159.89.111.245">
+        <fileTransfer host="159.89.111.245" port="22" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+      <webServer id="a1db56f9-b4da-4636-ba24-304a1adde729" name="DigitalOceanFTP" url="http://159.89.111.245">
+        <fileTransfer host="159.89.111.245" port="21" rootFolder="/home/mkl">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="21" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
