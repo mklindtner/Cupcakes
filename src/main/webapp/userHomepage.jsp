@@ -56,9 +56,13 @@
         		out.print(sc.getItem(i) + "<br />");
         		totalPrice += sc.getItem(i).getCupcake().getTotalPrice() * sc.getItem(i).getQuantity();
         	}
-        	out.println("Your total price is: " + totalPrice);
+        	if(user.getBalance() < totalPrice) {
+        		out.println("you can currently not afford this shoppingCart");
+            } else
+        	    out.println("Your total price is: " + totalPrice);
         }
-        //for tests
+
+
 
     %>
     <form action="ServletProducts" method="post">
@@ -84,6 +88,11 @@
     <form action="ServletProducts" method="post">
         <input type="hidden" name="originPost" value="Confirmation" />
         <input type="submit" value="Purchase" />
+    </form>
+
+    <form action="ServletProducts" method="post">
+        <input type="hidden" name="originPost" value="invoices" />
+        <input type="submit" value="see Invoices">
     </form>
 
 

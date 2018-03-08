@@ -26,5 +26,10 @@
         out.print("Your total price is: " + totalPrice);
         out.print("Your remaining balance is: " + u.getBalance());
     %>
+
+    <form action="Servlet001" method="get">
+        <input type="hidden" name="originGet" value="redirect"/>
+        <input type="submit" value="userPage" />
+    </form>
 </body>
 </html>

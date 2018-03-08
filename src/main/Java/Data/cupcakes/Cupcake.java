@@ -23,6 +23,14 @@ public class Cupcake
 		return top;
 	}
 
+	public int getBotID() {
+		return bot.getId();
+	}
+
+	public int getTopID() {
+		return top.getId();
+	}
+
 	public String getBotFlavor()
 	{
 		return bot.getBottomFlavor();

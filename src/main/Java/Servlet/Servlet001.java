@@ -78,6 +78,9 @@ public class Servlet001 extends HttpServlet
 			response.sendRedirect("Administrator.jsp");
 		}
 
+		if(s.equals("redirect"))
+			response.sendRedirect("userHomepage.jsp");
+
 	}
 
 

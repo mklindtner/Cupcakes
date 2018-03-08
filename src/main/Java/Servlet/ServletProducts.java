@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -23,7 +24,6 @@ public class ServletProducts extends HttpServlet
 	private ShoppingCart sc;
 	public ServletProducts() {
 		pdawg = new ProductDAO();
-
 	}
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
@@ -60,8 +60,8 @@ public class ServletProducts extends HttpServlet
 			out.println("totalPrice: " + totalPrice);
 
 			if(u.getBalance() >= totalPrice) {
-				udawg.updateUserBalance(u.getUsername(), u.getBalance()-totalPrice);
-				out.println("in here");
+				u = udawg.updateUserBalance(u.getUsername(), u.getBalance()-totalPrice);
+				request.getSession().setAttribute("user", u);
 				response.sendRedirect("confirmation.jsp");
 			} else
 				response.sendRedirect("userHomepage.jsp");
@@ -72,7 +72,29 @@ public class ServletProducts extends HttpServlet
 			sc.clearShoppingCart();
 			response.sendRedirect("userHomepage.jsp");
 		}
+		if(s.equals("invoices")) {
+			User u = (User) request.getSession().getAttribute("user");
+			if(u.isAdmin()) {
+				List<Invoice> usersInvoice = pdawg.getUsersInvoice();
+				addToCupcake(usersInvoice, request);
+			} else  {
+				List<Invoice> invoiceList = pdawg.getUserInvoices(u.getUsername());
+				addToCupcake(invoiceList, request);
+			}
+			response.sendRedirect("userInvoice.jsp");
+		}
 
+	}
+	private void addToCupcake(List<Invoice> invoiceList, HttpServletRequest request) {
+		List<Cupcake> cList = new ArrayList<Cupcake>();
+		for(Invoice i: invoiceList) {
+			Topping top = pdawg.getTopping(i.getTopId());
+			Bottom bot = pdawg.getButtom(i.getBotID());
+			Cupcake cupcake = new Cupcake(top, bot);
+			cList.add(cupcake);
+		}
+		request.getSession().setAttribute("cupcakeList", cList);
+		request.getSession().setAttribute("invoiceList", invoiceList);
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException

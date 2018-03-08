@@ -5,6 +5,7 @@ import Data.Users.User;
 import Data.datasource.datasource_cloud;
 import Data.datasource.datasource_local;
 
+import javax.xml.transform.Result;
 import java.beans.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,7 +17,6 @@ public class ProductDAO
 {
 	private DBConnector dbcon = new DBConnector(new datasource_local().getDataSource());
 	//private DBConnector dbcon = new DBConnector(new datasource_cloud().getDataSource());
-	//put into cupcakes or put all DAO's in one map together
 	public List<Bottom> getAllBottoms() {
 		List<Bottom> bottomList = new ArrayList<Bottom>();
 		try {
@@ -81,6 +81,45 @@ public class ProductDAO
 		return t;
 	}
 
+	//made for invoiceDetails, this annoys me
+	public Topping getTopping(int id) {
+		Topping top = null;
+		try {
+			dbcon.open();
+			String sql = "Select * FROM TOPPING WHERE ID=?";
+			PreparedStatement st = dbcon.preparedStatement(sql);
+			st.setInt(1, id);
+			ResultSet rs = st.executeQuery();
+			if(rs.next()) {
+				String topping = rs.getString("TOP");
+				int price = rs.getInt("PRICE");
+				top = new Topping(id, price, topping);
+			}
+			return top;
+		}catch (SQLException ex) {
+			throw new IllegalStateException("Unable to find topping from ID");
+		}
+	}
+
+	public Bottom getButtom(int id) {
+		Bottom bot = null;
+		try {
+			dbcon.open();
+			String sql = "Select * FROM BOTTOM WHERE ID=?";
+			PreparedStatement st = dbcon.preparedStatement(sql);
+			st.setInt(1, id);
+			ResultSet rs = st.executeQuery();
+			if(rs.next()) {
+				String bottom = rs.getString("BOT");
+				int price = rs.getInt("PRICE");
+				bot = new Bottom(id, price, bottom);
+			}
+			return bot;
+		} catch(SQLException ex) {
+			throw new IllegalStateException("Unable to find Bottom from ID");
+		}
+	}
+
 	public Bottom getBottom(String name) {
 		Bottom b = null;
 		try {
@@ -138,5 +177,51 @@ public class ProductDAO
 		}
 
 		return invoice;
+	}
+
+	public List<Invoice> getUserInvoices(String username) {
+		List<Invoice> userInvoice = new ArrayList<Invoice>();
+		try {
+			dbcon.open();
+			String sql = "Select * FROM invoice WHERE userID=?";
+			PreparedStatement st = dbcon.preparedStatement(sql);
+			st.setString(1, username);
+			ResultSet rs = st.executeQuery();
+			while(rs.next()) {
+				int id = rs.getInt("id");
+				int topID = rs.getInt("TopID");
+				int botID = rs.getInt("BotID");
+				int quantity = rs.getInt("quantity");
+				int totalCost = rs.getInt("totalCost");
+				Invoice invoice = new Invoice(id, username, topID, botID, quantity, totalCost);
+				userInvoice.add(invoice);
+			}
+		}catch(SQLException ex) {
+			ex.printStackTrace();
+		}
+		return userInvoice;
+	}
+
+	public List<Invoice> getUsersInvoice() {
+		List<Invoice> usersInvoice = new ArrayList<Invoice>();
+		try {
+			dbcon.open();
+			String sql = "Select * FROM invoice";
+			PreparedStatement st = dbcon.preparedStatement(sql);
+			ResultSet rs = st.executeQuery();
+			while(rs.next()) {
+				int id = rs.getInt("id");
+				int topID = rs.getInt("TopID");
+				int botID = rs.getInt("BotID");
+				int quantity = rs.getInt("quantity");
+				int totalCost = rs.getInt("totalCost");
+				String userID = rs.getString("UserID");
+				Invoice invoice = new Invoice(id, userID, topID, botID, quantity, totalCost);
+				usersInvoice.add(invoice);
+			}
+			return usersInvoice;
+		}catch(SQLException ex) {
+			throw new IllegalStateException("Unable to find all users invoice");
+		}
 	}
 }

@@ -6,6 +6,7 @@ import Data.cupcakes.Topping;
 import Data.datasource.datasource_cloud;
 import Data.datasource.datasource_local;
 import Data.unused.DBConnector_local;
+import com.sun.org.apache.xalan.internal.xsltc.compiler.util.ResultTreeType;
 
 import javax.swing.plaf.nimbus.State;
 import java.sql.PreparedStatement;
@@ -51,7 +52,6 @@ public class UserDAO implements IUser
 			PreparedStatement st = dbcon.preparedStatement(sqlQuery);
 			ResultSet rs = st.executeQuery();
 			//PreparedStatement st = conn.getConnection().prepareStatement(sqlQuery);
-			//ResultSet rs = st.executeQuery();
 			if(rs.next()) {
 				String tmpUsername = rs.getString("username");
 				String password = rs.getString("upassword");
@@ -67,14 +67,24 @@ public class UserDAO implements IUser
 		}
 	}
 
-	public void updateUserBalance(String username, int ubalance) {
+	public User updateUserBalance(String username, int ubalance) {
+		User u = null;
 		try {
 			dbcon.open();
 			String sql = "Update users SET ubalance=? WHERE username=?";
 			PreparedStatement st = dbcon.preparedStatement(sql);
-			st.setString(1, username);
-			st.setInt(2, ubalance);
+			st.setInt(1, ubalance);
+			st.setString(2, username);
 			st.executeUpdate();
+			ResultSet rs = st.executeQuery();
+			if(rs.next()) {
+				String password = rs.getString("password");
+				String email = rs.getString("email");
+				boolean admin = rs.getBoolean("admin");
+				int balance = rs.getInt("balance");
+				u = new User(username, password, balance, email, admin);
+			}
+			return u;
 		} catch(SQLException ex) {
 			throw new IllegalStateException("Unable to updateBalance");
 		}
@@ -124,7 +134,7 @@ public class UserDAO implements IUser
 		List<User> users = new ArrayList<User>();
 		try {
 			dbcon.open();
-			String sql = "select * FROM users";
+			String sql = "Select * FROM users";
 			PreparedStatement st = dbcon.preparedStatement(sql);
 			ResultSet rs = st.executeQuery();
 			while(rs.next()) {

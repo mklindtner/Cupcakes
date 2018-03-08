@@ -50,5 +50,11 @@
         <input type="submit" value="UPDATE USER" />
     </form>
 
+    <h3>Order List</h3>
+    <form id="formRedirect" action="ServletProducts" method="post">
+        <input type="hidden" name="originPost" value="invoices" />
+        <input type="submit" value="Display Orders" />
+    </form>
+
 </body>
 </html>
